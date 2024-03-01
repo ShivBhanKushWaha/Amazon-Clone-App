@@ -7,10 +7,10 @@ const jwt = require("jsonwebtoken");
 const cores = require("cors");
 const User = require("./models/user");
 const Order = require("./models/order");
-
+require('dotenv').config()
 
 const app = express();
-const port = 8000;
+const port = process.env.PORT || 3001;
 
 app.use(cores());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -19,7 +19,7 @@ app.use(bodyParser.json());
 // connect to db
 monoose
   .connect(
-    "mongodb+srv://petersonwatson770:myshopapp@cluster0.hdwhumf.mongodb.net/"
+    process.env.DB_URL
   )
   .then(() => {
     console.log("connected to MongoDB");
@@ -54,7 +54,7 @@ const sendVerificationEmail = async (email, verificationToken) => {
     from: "amazon.com",
     to: email,
     subject: "Please Verify your Email Account!",
-    text: `Please click the following links to verify your mail : http://localhost:8000/verify/${verificationToken}`,
+    text: `Please click the following links to verify your mail : https://myshop-backend-k7sa.onrender.com/verify/${verificationToken}`,
   };
 
   // send the email to user
@@ -279,6 +279,10 @@ app.get("/orders/:userId",async(req,res) => {
   } catch(error){
     res.status(500).json({ message: "Error"});
   }
+})
+
+app.get('/', (req, res) => {
+  return res.json({message : "hello from server"});
 })
 
 app.listen(port, () => {
